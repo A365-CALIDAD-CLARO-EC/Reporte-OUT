@@ -165,6 +165,8 @@ nav.sec a:hover{background:#EAF0F7;color:var(--cx-navy)}
 .herolab:first-child{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cx-ink2)}
 .lead{font-size:14px}
 main{padding-bottom:10px}
+.golink{align-self:end;display:inline-flex;align-items:center;gap:6px;background:var(--cx-red);color:#fff;border:1px solid var(--cx-red);border-radius:6px;padding:7px 14px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+.golink:hover{background:#B31F14;border-color:#B31F14}
 </style>
 </head>
 <body>
@@ -301,7 +303,7 @@ function keyOf(e,k){return k==="wk"?(e[dateKey]?wkLabel(e[dateKey]):null):e[k]}
 function buildFilters(){
  let h=`<label class="f">Fecha base<select id="fDate"><option value="fl">Fecha de llamada</option><option value="fm">Fecha de monitoreo</option></select></label>`;
  FILT.forEach(([k,l])=>{h+=`<label class="f">${l}<select data-k="${k}"></select></label>`});
- h+=`<label class="f" style="max-width:110px;min-width:90px">Meta (%)<input id="fMeta" type="number" min="0" max="100" step="1" value="85"></label><button id="reset">Limpiar</button><span class="count" id="cnt"></span>`;
+ h+=`<label class="f" style="max-width:110px;min-width:90px">Meta (%)<input id="fMeta" type="number" min="0" max="100" step="1" value="85"></label><button id="reset">Limpiar</button><a class="golink" href="https://a365-calidad-claro-ec.github.io/Reporte-NPS/PRESENTACI%C3%93N%20CLARO.html" title="Abrir la presentación de Calidad Ventas (láminas y descarga en PowerPoint)">Presentación ▸</a><span class="count" id="cnt"></span>`;
  $("#filters").innerHTML=h;fillOpts();
  document.querySelectorAll("#filters select[data-k]").forEach(s=>s.onchange=render);
  $("#fDate").onchange=e=>{dateKey=e.target.value;fillOpts();render()};

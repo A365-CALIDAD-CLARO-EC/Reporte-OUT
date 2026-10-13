@@ -165,6 +165,8 @@ nav.sec a:hover{background:#EAF0F7;color:var(--cx-navy)}
 .herolab:first-child{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cx-ink2)}
 .lead{font-size:14px}
 main{padding-bottom:10px}
+.golink{align-self:end;display:inline-flex;align-items:center;gap:6px;background:var(--cx-red);color:#fff;border:1px solid var(--cx-red);border-radius:6px;padding:7px 14px;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+.golink:hover{background:#B31F14;border-color:#B31F14}
 </style>
 </head>
 <body>
@@ -285,7 +287,7 @@ function agg(L){
  const n=L.length,bp=BLOCKS.map((b,k)=>mean(L.map(e=>e.bp[k])));
  let pts=0,top=0;BLOCKS.forEach((b,k)=>{if(bp[k]!=null){pts+=b.tope*bp[k];top+=b.tope}});
  const sc=L.filter(e=>e.fin!=null);
- const si=L.filter(e=>e.efe==="SI").length,no=L.filter(e=>e.efe==="NO").length;
+ const si=L.filter(e=>e.efe==="SI").length,no=L.filter(e=>e.efe!=="SI").length; // NO APLICA cuenta como no venta
  return {n,bp,pts:bp.map((v,k)=>v==null?null:v*BLOCKS[k].tope),fin:mean(L.map(e=>e.fin)),copc:mean(L.map(e=>e.copc)),
   ecN:L.filter(e=>e.ec>0).length,ec:n?L.filter(e=>e.ec>0).length/n:null,bm:sc.length?sc.filter(e=>e.fin<META).length/sc.length:null,
   efe:si+no?si/(si+no):null,ret:n?L.filter(e=>e.ret==="SI").length/n:null,scN:sc.length};
@@ -301,7 +303,7 @@ function keyOf(e,k){return k==="wk"?(e[dateKey]?wkLabel(e[dateKey]):null):e[k]}
 function buildFilters(){
  let h=`<label class="f">Fecha base<select id="fDate"><option value="fl">Fecha de llamada</option><option value="fm">Fecha de monitoreo</option></select></label>`;
  FILT.forEach(([k,l])=>{h+=`<label class="f">${l}<select data-k="${k}"></select></label>`});
- h+=`<label class="f" style="max-width:110px;min-width:90px">Meta (%)<input id="fMeta" type="number" min="0" max="100" step="1" value="85"></label><button id="reset">Limpiar</button><span class="count" id="cnt"></span>`;
+ h+=`<label class="f" style="max-width:110px;min-width:90px">Meta (%)<input id="fMeta" type="number" min="0" max="100" step="1" value="85"></label><button id="reset">Limpiar</button><a class="golink" href="https://a365-calidad-claro-ec.github.io/Reporte-NPS/" title="Abrir el dashboard de encuestas post-llamada (NPS)">Encuestas NPS ▸</a><span class="count" id="cnt"></span>`;
  $("#filters").innerHTML=h;fillOpts();
  document.querySelectorAll("#filters select[data-k]").forEach(s=>s.onchange=render);
  $("#fDate").onchange=e=>{dateKey=e.target.value;fillOpts();render()};
@@ -368,7 +370,7 @@ function renderHero(L,A){
  const aw=as.slice().sort((a,b)=>a[1].fin-b[1].fin)[0],ab=as.slice().sort((a,b)=>b[1].fin-a[1].fin)[0];
  if(aw)ins.push(["Asesor con menor PEC final",aw[0],`${pct(aw[1].fin)} en ${aw[1].n} evaluación(es)`,"var(--red)"]);
  if(ab)ins.push(["Asesor con mayor PEC final",ab[0],`${pct(ab[1].fin)} en ${ab[1].n} evaluación(es)`,"var(--ok)"]);
- const si=agg(L.filter(e=>e.efe==="SI")),no=agg(L.filter(e=>e.efe==="NO"));
+ const si=agg(L.filter(e=>e.efe==="SI")),no=agg(L.filter(e=>e.efe!=="SI"));
  if(si.n&&no.n)ins.push(["Calidad y venta",`${pct(si.fin)} con venta vs ${pct(no.fin)} sin venta`,`Brecha de ${((si.fin-no.fin)*100).toFixed(1)} pts en el PEC final`,"var(--b3)"]);
  $("#insights").innerHTML=ins.map(([l,v,x,c])=>`<div class="ins" style="--c:${c}"><div class="l">${l}</div><div class="v">${esc(v)}</div><div class="x">${x}</div></div>`).join("");
 }
@@ -437,9 +439,9 @@ function renderHeat(L){
  $("#tHeat").innerHTML=h+"</tbody>";
 }
 function renderVenta(L){
- const cats=["SI","NO","NO APLICA"];const gs=cats.map(c=>agg(L.filter(e=>e.efe===c)));
- mk("cEfe",{type:"bar",data:{labels:["Venta concretada","No concretada","No aplica"],datasets:BLOCKS.map((b,k)=>({label:b.s,data:gs.map(a=>a.bp[k]==null?null:a.bp[k]*100),backgroundColor:css(b.c.slice(4,-1))}))},
-  options:{maintainAspectRatio:false,scales:{y:{min:0,max:100,ticks:{callback:v=>v+"%"}}},plugins:{title:{display:true,text:"Cumplimiento por bloque según resultado de venta"},subtitle:{display:true,text:gs.map((a,i)=>["Sí","No","N/A"][i]+": "+a.n+" ev.").join(" · ")},tooltip:{callbacks:{label:c=>c.dataset.label+": "+c.parsed.y.toFixed(1)+"%"}}}}});
+ const gs=[agg(L.filter(e=>e.efe==="SI")),agg(L.filter(e=>e.efe!=="SI"))]; // venta / no venta (incluye NO APLICA)
+ mk("cEfe",{type:"bar",data:{labels:["Venta concretada","No concretada"],datasets:BLOCKS.map((b,k)=>({label:b.s,data:gs.map(a=>a.bp[k]==null?null:a.bp[k]*100),backgroundColor:css(b.c.slice(4,-1))}))},
+  options:{maintainAspectRatio:false,scales:{y:{min:0,max:100,ticks:{callback:v=>v+"%"}}},plugins:{title:{display:true,text:"Cumplimiento por bloque según resultado de venta"},subtitle:{display:true,text:gs.map((a,i)=>["Sí","No"][i]+": "+a.n+" ev.").join(" · ")},tooltip:{callbacks:{label:c=>c.dataset.label+": "+c.parsed.y.toFixed(1)+"%"}}}}});
  const cr=[...groupBy(L,e=>e.cr)].map(([k,v])=>[k,v.length,agg(v)]);
  mk("cCausa",{type:"doughnut",data:{labels:cr.map(x=>`${x[0]} · PEC ${pct(x[2].fin,0)}`),datasets:[{data:cr.map(x=>x[1]),backgroundColor:[css("--cx-c1"),css("--cx-c2"),css("--cx-c3"),css("--cx-c4"),css("--cx-c5")],borderColor:css("--panel")}]},
   options:{maintainAspectRatio:false,cutout:"58%",plugins:{title:{display:true,text:"Causa raíz principal (N° evaluaciones)"},legend:{position:"bottom"}}}});

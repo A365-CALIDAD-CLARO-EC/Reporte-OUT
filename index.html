@@ -351,6 +351,8 @@ function buildFilters(){
  FILT.forEach(([k,l])=>{h+=`<label class="f">${l}<select data-k="${k}"></select></label>`});
  h+=`<label class="f" style="max-width:110px;min-width:90px">Meta (%)<input id="fMeta" type="number" min="0" max="100" step="1" value="85"></label><button id="reset">Limpiar</button><a class="golink" href="https://a365-calidad-claro-ec.github.io/Reporte-NPS/PRESENTACI%C3%93N%20CLARO.html" title="Abrir la presentación de Calidad Ventas (láminas y descarga en PowerPoint)">Presentación ▸</a><span class="count" id="cnt"></span>`;
  $("#filters").innerHTML=h;DIAS=DiasPicker($("#fDias"),render);DIAS.setDates(fechasBase());fillOpts();
+ // Mes por defecto: el mes en curso (o el último con datos, si aún no hay evaluaciones del mes)
+ {const sm=document.querySelector('#filters select[data-k="mes"]'),d=new Date(),act=MESES[d.getMonth()]+" "+d.getFullYear();if(sm){const v=[...sm.options].map(o=>o.value).filter(Boolean);sm.value=v.includes(act)?act:(v[v.length-1]||"")}}
  document.querySelectorAll("#filters select[data-k]").forEach(s=>s.onchange=render);
  $("#fDate").onchange=e=>{dateKey=e.target.value;DIAS.clear();DIAS.setDates(fechasBase());fillOpts();render()};
  $("#fMeta").oninput=e=>{const v=parseFloat(e.target.value);if(!isNaN(v)){META=v/100;render()}};

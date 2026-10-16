@@ -342,7 +342,7 @@ function DiasPicker(host,onChange){
 // ---------- filters ----------
 let DIAS=null;
 const fechasBase=()=>[...new Set(DATA.map(e=>e[dateKey]).filter(Boolean))].sort();
-const FILT=[["wk","Semana"],["sup","Supervisor"],["ase","Asesor"],["camp","Motivo de llamada"],["ges","Gestión"],["efe","Venta concretada"],["cr","Causa raíz"],["tm","Tipo de monitoreo"]];
+const FILT=[["sup","Supervisor"],["ase","Asesor"],["camp","Motivo de llamada"],["ges","Gestión"],["efe","Venta concretada"],["cr","Causa raíz"],["tm","Tipo de monitoreo"]];
 function keyOf(e,k){return k==="wk"?(e[dateKey]?wkLabel(e[dateKey]):null):e[k]}
 function buildFilters(){
  let h=`<label class="f">Fecha base<select id="fDate"><option value="fl">Fecha de llamada</option><option value="fm">Fecha de monitoreo</option></select></label><div class="f" style="max-width:none;flex:0 0 auto">Días<div id="fDias"></div></div>`;

@@ -109,8 +109,6 @@ dialog .tw{max-height:calc(90vh - 130px);overflow:auto}
 @media (max-width:1100px){.pecs{grid-template-columns:repeat(3,1fr)}.kpis{grid-template-columns:repeat(4,1fr)}.kpi:nth-child(5){border-left:0}.kpi:nth-child(n+5){border-top:1px solid var(--line)}}
 @media (max-width:820px){.bar{position:static}.hero{grid-template-columns:1fr}.grid2,.grid2e{grid-template-columns:1fr}.big{font-size:68px}.seg .t{display:none}}
 @media (max-width:560px){.lg-claro{width:48px;height:48px}.lg-a365{height:44px}h1{font-size:24px}.pecs{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}.kpi{border-left:0;border-top:1px solid var(--line)}.kpi:nth-child(-n+2){border-top:0}.kpi:nth-child(even){border-left:1px solid var(--line)}.f{max-width:none;flex-basis:45%}.chart{height:260px}.stack{height:60px}.seg .v{font-size:15px;left:4px}}
-.grid3{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.8fr) minmax(0,1.4fr);gap:14px}.grid3b{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}.parb{margin-top:14px}.parb h3{margin:0 0 8px;font-size:17px;font-weight:600}.parTop{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;align-items:center}h3.sub{font-size:17px;font-weight:600;margin:20px 0 8px}.btnx{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}.btnx:hover{border-color:var(--cx-navy);color:var(--cx-navy)}table.pda td{text-align:left;vertical-align:top;font-size:12.5px;min-width:110px}table.pda td:nth-child(-n+2){min-width:84px;white-space:nowrap}.wr{white-space:normal;min-width:150px}.wrapc{white-space:normal!important;min-width:280px;line-height:1.45}table.pda td{white-space:normal!important}
-@media (max-width:1000px){.grid3,.grid3b,.parTop,#infEfec .grid2e,#infCausa .grid2e,#infOfer .grid2e{grid-template-columns:minmax(0,1fr)}}
 </style>
 <style id="tema-claro-a365">
 /* ===== Tema corporativo Claro x A365 (común a todos los reportes) ===== */
@@ -187,7 +185,7 @@ main{padding-bottom:10px}
 <div class="bar"><div class="wrap">
  <div class="filters" id="filters"></div>
  <nav class="sec" aria-label="Secciones">
-  <a href="#resumen">Resumen</a><a href="#infEfec">Efectividad mes</a><a href="#infParam">Parámetros</a><a href="#infMeta">Meta asesor</a><a href="#infRetro">Retros</a><a href="#infCausa">Causa raíz</a><a href="#infOfer">Ofertado</a><a href="#infPda">Plan de acción</a><a href="#tiempo">Evolución</a><a href="#supervisor">Supervisor</a><a href="#" id="openAse">Ranking asesor</a><a href="#motivo">Motivo de llamada</a><a href="#items">Ítems de la pauta</a><a href="#venta">Efectividad y causa raíz</a><a href="#detalle">Detalle</a><a href="#metodo">Metodología</a>
+  <a href="#resumen">Resumen</a><a href="#tiempo">Evolución</a><a href="#supervisor">Supervisor</a><a href="#" id="openAse">Ranking asesor</a><a href="#motivo">Motivo de llamada</a><a href="#items">Ítems de la pauta</a><a href="#venta">Efectividad y causa raíz</a><a href="#detalle">Detalle</a><a href="#metodo">Metodología</a>
  </nav>
 </div></div>
 <main class="wrap">
@@ -204,58 +202,6 @@ main{padding-bottom:10px}
  <h2 style="margin-top:26px">Lectura rápida</h2>
  <p class="lead">Se recalcula con los filtros aplicados.</p>
  <div class="insights" id="insights"></div>
-</section>
-
-<section id="infEfec">
- <h2>Efectividad de monitoreo · <span class="mesRefTxt"></span></h2>
- <p class="lead">Informe del mes con el modelo del informe quincenal del cliente. El mes es el del filtro <b>Mes</b> (por defecto el mes en curso) y los comparativos usan los meses anteriores con los mismos filtros. Efectividad = promedio del EC. Semanas de lunes a domingo cortadas en el mes.</p>
- <div class="kpis" id="emKpis"></div>
- <div class="grid3" style="margin-top:14px"><div class="panel"><div class="chart"><canvas id="cEm1"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cEm2"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cEm3"></canvas></div></div></div>
- <div class="grid2e" style="margin-top:14px"><div class="panel"><div class="chart"><canvas id="cEm4"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cEm5"></canvas></div></div></div>
-</section>
-
-<section id="infParam">
- <h2>Efectividad por parámetros · <span class="mesRefTxt"></span></h2>
- <p class="lead">Cumplimiento de cada PEC (promedio del bloque) y de sus ítems, sin contar los NO APLICA. Las tablas muestran qué asesores no cumplen cada ítem y cuántas veces.</p>
- <div id="parGrid"></div>
-</section>
-
-<section id="infMeta">
- <h2>Efectividad de monitoreo y cumplimiento de meta por asesor · <span class="mesRefTxt"></span></h2>
- <p class="lead">Status: EXCELENTE ≥ 95% · BUENO ≥ 90% · REGULAR ≥ 85% · SEGUIMIENTO bajo 85% (mismos cortes de la presentación). Var. = puntos frente al mes anterior. Clic en un encabezado para ordenar.</p>
- <div class="tw"><table id="tMeta"></table></div>
- <h3 class="sub">PEC Negocio y PEC Cumplimiento</h3>
- <div class="tw"><table id="tMetaNC"></table></div>
-</section>
-
-<section id="infRetro">
- <h2>Efectividad de retroalimentaciones · <span class="mesRefTxt"></span></h2>
- <p class="lead">Retroalimentaciones enviadas = evaluaciones con "Aplica retroalimentación = SI". Qualtrics no registra cuándo se realizó la retro, por eso no se muestra dentro / fuera de tiempo.</p>
- <div class="tw"><table id="tRetro"></table></div>
-</section>
-
-<section id="infCausa">
- <h2>Análisis de no aceptación – causa raíz · <span class="mesRefTxt"></span></h2>
- <p class="lead">Llamadas sin venta con causa raíz Agente, Cliente o Proceso. "Incumplen" = no ventas con causa raíz Agente. El detalle es el texto que registra el analista en Qualtrics.</p>
- <div class="grid3"><div class="panel"><div class="chart"><canvas id="cCr1"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cCr2"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cCr3"></canvas></div></div></div>
- <div class="grid2e" style="margin-top:14px"><div class="tw"><table id="tCrAse"></table></div><div class="tw"><table id="tCrEvo"></table></div></div>
- <div class="grid3b" style="margin-top:14px"><div class="tw"><table id="tCrAg"></table></div><div class="tw"><table id="tCrCl"></table></div><div class="tw"><table id="tCrPr"></table></div></div>
- <h3 class="sub">Evolutivo semanal de asesores que incumplen</h3>
- <div class="tw"><table id="tCrSem"></table></div>
-</section>
-
-<section id="infOfer">
- <h2>Servicio ofertado · <span class="mesRefTxt"></span></h2>
- <p class="lead">Plan leído del texto "Producto ofertado" del analista (Plan $10, $12…). No se cuentan las llamadas sin ofrecimiento. La promoción vigente sale del ítem "Ofrece promoción vigente".</p>
- <div class="grid3"><div class="panel"><div class="chart"><canvas id="cOf1"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cOf2"></canvas></div></div><div class="panel"><div class="chart"><canvas id="cOf3"></canvas></div></div></div>
- <div class="grid2e" style="margin-top:14px"><div class="tw"><table id="tOfAse"></table></div><div class="tw"><table id="tOfPromo"></table></div></div>
-</section>
-
-<section id="infPda">
- <div class="shead"><div><h2>Plan de acción · <span class="mesRefTxt"></span></h2>
-  <p class="lead">Un plan por asesor con los ítems que incumplió en el mes y sus no ventas por causa agente. Objetivo, acción, meta y resultado se sugieren según el ítem con más casos: revísalos antes de enviarlos. Descárgalo en Excel para completar responsable, fechas y estado.</p></div>
-  <button type="button" id="pdaCsv" class="btnx">Descargar plan de acción (Excel)</button></div>
- <div class="tw"><table id="tPda" class="pda"></table></div>
 </section>
 
 <section id="tiempo">
@@ -442,224 +388,13 @@ function stdCols(first,get,extra=[]){if(!first.t)first.t=()=>"Total";return[firs
  {h:"% bajo meta",v:x=>get(x).bm,f:x=>pct(get(x).bm),t:a=>pct(a.bm)},...extra]}
 
 
-// ================= Informe del mes (modelo del informe quincenal del cliente) =================
-// Todo sale de DATA (Qualtrics). Mes = el del filtro Mes (o el último con datos); los comparativos
-// usan los meses anteriores con los demás filtros aplicados.
-const STATUS=[[0.95,"EXCELENTE","ok"],[0.90,"BUENO","ok"],[0.85,"REGULAR","mid"],[0,"SEGUIMIENTO","bad"]];   // mismos cortes de la presentación
-const statusOf=v=>v==null?null:STATUS.find(s=>v>=s[0]);
-const stPill=v=>{const s=statusOf(v);return s?`<span class="pill ${s[2]}">${s[1]}</span>`:"–"};
-const varPts=(a,b)=>{if(a==null||b==null)return"–";const d=(b-a)*100;return`<span style="color:${d<0?"var(--red)":d>0?"var(--ok)":"var(--muted)"};font-weight:600">${d>0?"+":""}${d.toFixed(1)} pts</span>`};
-const ymOf=e=>e[dateKey]?e[dateKey].slice(0,7):null;
-const ymTxt=ym=>MESES[+ym.slice(5,7)-1]+" "+ym.slice(0,4);
-const ymFin=ym=>ym+"-"+dd2(new Date(+ym.slice(0,4),+ym.slice(5,7),0).getDate());
-const semN=ym=>semMes(ymFin(ym));
-const semLabels=ym=>Array.from({length:semN(ym)},(_,i)=>{const[a,b]=semRango(ym,i+1);return`S${i+1} (${dd2(a)}–${dd2(b)})`});
-const bc=k=>css(BLOCKS[k].c.slice(4,-1));
-const pal=()=>[1,2,3,4,5].map(i=>css("--cx-c"+i)).concat([css("--b0"),css("--b3"),css("--muted")]);
-const fdd=ds=>ds?ds.slice(8,10)+"/"+ds.slice(5,7)+"/"+ds.slice(0,4):"–";
-const masDias=(ds,n)=>{const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+dd2(d.getMonth()+1)+"-"+dd2(d.getDate())};
-function baseSinMes(){const sel=[...document.querySelectorAll("#filters select[data-k]")].filter(s=>s.value&&s.dataset.k!=="mes");return DATA.filter(e=>e[dateKey]&&sel.every(s=>keyOf(e,s.dataset.k)===s.value))}
-function mesRef(){const s=document.querySelector('#filters select[data-k="mes"]');if(s&&s.value&&MES_ORD[s.value])return MES_ORD[s.value];const ms=[...new Set(DATA.map(ymOf).filter(Boolean))].sort();return ms[ms.length-1]}
-// etiquetas de valor sobre las barras y texto al centro de las donas
-const VL={id:"vl",afterDatasetsDraw(ch){const o=ch.options.plugins.vl;if(!o)return;const{ctx}=ch;ctx.save();ctx.font='600 11px "Barlow",sans-serif';ctx.fillStyle=css("--ink");
- ch.data.datasets.forEach((ds,i)=>{const m=ch.getDatasetMeta(i);if(m.hidden||m.type!=="bar")return;m.data.forEach((el,j)=>{const v=ds.data[j];if(v==null||isNaN(v)||(v===0&&ch.data.datasets.length>1))return;const t=o.p?Math.round(v)+"%":String(v);
-  if(ch.options.indexAxis==="y"){ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillText(t,el.x+4,el.y)}else{ctx.textAlign="center";ctx.textBaseline="bottom";ctx.fillText(t,el.x,el.y-2)}})});ctx.restore()}};
-const CENTER={id:"center",afterDraw(ch){const t=ch.options.plugins.center&&ch.options.plugins.center.text;const m=ch.getDatasetMeta(0).data[0];if(!t||!m)return;const{ctx}=ch;ctx.save();
- ctx.font='600 26px "Barlow Condensed",sans-serif';ctx.fillStyle=css("--ink");ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(t,m.x,m.y);ctx.restore()}};
-function barCfg(labels,datasets,{pct:esPct=true,horizontal=false,title="",trunc=0}={}){
- const vAx=horizontal?"x":"y",cAx=horizontal?"y":"x";
- return{type:"bar",data:{labels,datasets},plugins:[VL],options:{maintainAspectRatio:false,indexAxis:horizontal?"y":"x",layout:{padding:{top:horizontal?0:18,right:horizontal?44:0}},
-  plugins:{title:{display:!!title,text:title},legend:{display:datasets.length>1,position:"bottom",labels:{boxWidth:12}},vl:{p:esPct},
-   tooltip:{callbacks:{label:c=>`${c.dataset.label?c.dataset.label+": ":""}${esPct?(+c.raw).toFixed(1)+"%":c.raw}`}}},
-  scales:{[vAx]:{beginAtZero:true,max:esPct?100:undefined,ticks:{callback:v=>esPct?v+"%":v,precision:0},grid:{color:css("--line")}},
-   [cAx]:{grid:{display:false},ticks:{autoSkip:false,callback:function(v){const s=this.getLabelForValue(v);return trunc&&s.length>trunc?s.slice(0,trunc-1)+"…":s}}}}}}}
-function dona(id,v,color,titulo){mk(id,{type:"doughnut",data:{labels:["Cumple","Brecha"],datasets:[{data:v==null?[0,100]:[v*100,100-v*100],backgroundColor:[color,css("--track")],borderWidth:0}]},plugins:[CENTER],
- options:{maintainAspectRatio:false,cutout:"68%",plugins:{legend:{display:false},title:{display:!!titulo,text:titulo||""},center:{text:pct(v,0)},tooltip:{callbacks:{label:c=>c.label+": "+(+c.raw).toFixed(1)+"%"}}}}})}
-const filaVacia=(n,txt)=>`<tbody><tr><td colspan="${n}" class="empty">${txt}</td></tr></tbody>`;
-
-$("#parGrid").innerHTML=BLOCKS.map((b,k)=>`<div class="panel parb"><h3><span class="bdot" style="background:${b.c}"></span>${b.n}</h3><div class="parTop"><div class="chart" style="height:170px"><canvas id="cPd${k}"></canvas></div><div class="chart"><canvas id="cPi${k}"></canvas></div></div><div class="tw" style="margin-top:10px"><table id="tPa${k}"></table></div></div>`).join("");
-
-function renderInforme(){
- const B=baseSinMes(),ym=mesRef();if(!ym)return;
- const meses=[...new Set(B.map(ymOf).filter(Boolean))].filter(m=>m<=ym).sort().slice(-3);if(!meses.includes(ym))meses.push(ym);
- const LM=B.filter(e=>ymOf(e)===ym&&DIAS.has(e[dateKey]));
- const prev=meses.filter(m=>m<ym).slice(-1)[0]||null,LP=prev?B.filter(e=>ymOf(e)===prev):[];
- document.querySelectorAll(".mesRefTxt").forEach(x=>x.textContent=ymTxt(ym)+(DIAS.sel.size?" · "+DIAS.texto():""));
- const ctx={B,LM,LP,ym,meses,prev,A:agg(LM),AP:agg(LP),semL:semLabels(ym)};
- renderEfMon(ctx);renderParam(ctx);renderMetaAse(ctx);renderRetro(ctx);renderCausa(ctx);renderOfertado(ctx);renderPDA(ctx);
-}
-
-function renderEfMon({B,LM,ym,meses,prev,A,AP,semL}){
- const K=[["Asesores",new Set(LM.map(e=>e.ase)).size],["Monitoreos",A.n],["Ventas",LM.filter(e=>e.efe==="SI").length],["No ventas",LM.filter(e=>e.efe!=="SI").length],
-  ["Retroalimentaciones",LM.filter(e=>e.ret==="SI").length],["Efectividad del mes",pct(A.fin)],["Vs "+(prev?ymTxt(prev):"mes anterior"),varPts(AP.fin,A.fin)]];
- $("#emKpis").innerHTML=K.map(([l,v])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`).join("");
- const P=pal(),finMes=m=>{const a=agg(B.filter(e=>ymOf(e)===m));return a.fin==null?null:a.fin*100};
- mk("cEm1",barCfg(meses.map(ymTxt),[{label:"Efectividad",data:meses.map(finMes),backgroundColor:meses.map(m=>m===ym?css("--red"):css("--track")),maxBarThickness:70}],{title:`Efectividad – últimos ${meses.length} meses`}));
- dona("cEm2",A.fin,css("--red"),"Efectividad del mes");
- const maxS=Math.max(...meses.map(semN));
- mk("cEm3",barCfg(meses.map(ymTxt),Array.from({length:maxS},(_,i)=>({label:"S"+(i+1),data:meses.map(m=>{const a=agg(B.filter(e=>ymOf(e)===m&&semMes(e[dateKey])===i+1));return a.n&&a.fin!=null?a.fin*100:null}),backgroundColor:P[i%P.length]})),{title:"Evolutivo por semana del mes"}));
- mk("cEm4",barCfg(BLOCKS.map(b=>b.n),[prev?{label:ymTxt(prev),data:AP.bp.map(v=>v==null?null:v*100),backgroundColor:css("--cx-c1")}:null,{label:ymTxt(ym),data:A.bp.map(v=>v==null?null:v*100),backgroundColor:css("--red")}].filter(Boolean),{title:"Comparativo por PEC – mes anterior y actual"}));
- mk("cEm5",barCfg(semL,BLOCKS.map((b,k)=>({label:b.n,data:semL.map((_,i)=>{const a=agg(LM.filter(e=>semMes(e[dateKey])===i+1));return a.n&&a.bp[k]!=null?a.bp[k]*100:null}),backgroundColor:bc(k)})),{title:"Evolutivo semanal por PEC – "+ymTxt(ym)}));
-}
-
-function renderParam({LM}){
- const st=itemStats(LM);
- BLOCKS.forEach((b,k)=>{
-  dona("cPd"+k,mean(LM.map(e=>e.bp[k])),bc(k));
-  const its=st.filter(x=>x.b===k);$("#cPi"+k).parentElement.style.height=(40+its.length*34)+"px";
-  mk("cPi"+k,barCfg(its.map(x=>x.n),[{label:"% cumple",data:its.map(x=>x.ap?(1-x.q)*100:null),backgroundColor:its.map(x=>x.ap&&1-x.q<META?css("--red"):bc(k)),maxBarThickness:20}],{horizontal:true,trunc:46}));
-  const filas=its.filter(x=>x.nc>0).map(x=>{const m=new Map();LM.forEach(e=>{if(e.it[x.i]===0)m.set(e.ase,(m.get(e.ase)||0)+1)});return{...x,ases:[...m].sort((p,q)=>q[1]-p[1])}});
-  $("#tPa"+k).innerHTML=filas.length?`<thead><tr><th class="l">Ítem</th><th>% cumple</th><th>No cumple</th><th class="l">Asesores que no cumplen (casos)</th></tr></thead><tbody>`+
-   filas.map(x=>`<tr><td class="l">${esc(x.n)}${x.c?' <span class="pill bad">crítico</span>':""}</td><td class="h" style="${heat(1-x.q)}">${pct(1-x.q,0)}</td><td class="h">${x.nc}</td><td class="l wrapc">${x.ases.map(([a,n])=>`${esc(a)} <b>(${n})</b>`).join(" · ")}</td></tr>`).join("")+"</tbody>"
-   :filaVacia(4,LM.length?"Todos los ítems de este PEC se cumplieron en el mes.":"Sin evaluaciones en el mes.");
- });
-}
-
-function renderMetaAse({B,LM,ym,meses,prev,A,AP,semL}){
- const ant=meses.filter(m=>m<ym);
- const fila=(nom,v,pv,ants)=>({k:nom,a:agg(v),p:agg(pv),ant:ants,sem:semL.map((_,i)=>agg(v.filter(e=>semMes(e[dateKey])===i+1))),sup:[...new Set(v.map(e=>e.sup).filter(Boolean))].join(", ")});
- const g=[...groupBy(LM,e=>e.ase)].map(([a,v])=>fila(a,v,B.filter(e=>e.ase===a&&ymOf(e)===prev),ant.map(m=>agg(B.filter(e=>e.ase===a&&ymOf(e)===m)).fin)));
- const T=fila("Total",LM,B.filter(e=>ymOf(e)===prev),ant.map(m=>agg(B.filter(e=>ymOf(e)===m)).fin));
- const same=c=>({...c,t:c.f?x=>c.f(x):x=>esc(c.v(x))});
- const cols=[{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},{h:"Supervisor",l:1,v:x=>x.sup,t:()=>""},same({h:"Monit.",v:x=>x.a.n,f:x=>x.a.n}),
-  ...ant.map((m,i)=>same({h:ymTxt(m).slice(0,3).toUpperCase(),v:x=>x.ant[i],f:x=>pct(x.ant[i],0),st:x=>heat(x.ant[i])})),
-  ...semL.map((s,i)=>same({h:s.split(" ")[0],v:x=>x.sem[i].fin,f:x=>x.sem[i].n?pct(x.sem[i].fin,0):"",st:x=>x.sem[i].n?heat(x.sem[i].fin):""})),
-  ...BLOCKS.map((b,k)=>same({h:`<span class="bdot" style="background:${b.c}"></span>${b.s}`,v:x=>x.a.bp[k],f:x=>pct(x.a.bp[k],0),st:x=>heat(x.a.bp[k])})),
-  same({h:"Efect. "+ymTxt(ym).slice(0,3).toLowerCase(),v:x=>x.a.fin,f:x=>`<span class="pill ${tone(x.a.fin)}">${pct(x.a.fin)}</span>`}),
-  same({h:"Var.",v:x=>x.a.fin==null||x.p.fin==null?null:x.a.fin-x.p.fin,f:x=>varPts(x.p.fin,x.a.fin)}),
-  same({h:"Status calidad",v:x=>x.a.fin,f:x=>stPill(x.a.fin)})];
- const t=$("#tMeta");if(t._sort==null){t._sort=cols.length-3;t._dir=-1}
- table("tMeta",cols,g,T);
- const nc=[{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"}];
- [[2,"PEC NEG"],[3,"PEC CUMP"]].forEach(([k,n])=>nc.push(
-  same({h:`${n} ${prev?ymTxt(prev).slice(0,3).toLowerCase():"ant."}`,v:x=>x.p.bp[k],f:x=>pct(x.p.bp[k],0)}),
-  same({h:`${n} ${ymTxt(ym).slice(0,3).toLowerCase()}`,v:x=>x.a.bp[k],f:x=>pct(x.a.bp[k],0),st:x=>heat(x.a.bp[k])}),
-  same({h:"Var.",v:x=>x.a.bp[k]==null||x.p.bp[k]==null?null:x.a.bp[k]-x.p.bp[k],f:x=>varPts(x.p.bp[k],x.a.bp[k])}),
-  same({h:"Status "+n.split(" ")[1],v:x=>x.a.bp[k],f:x=>stPill(x.a.bp[k])})));
- table("tMetaNC",nc,g,T);
-}
-
-function renderRetro({LM}){
- const g=[...groupBy(LM,e=>e.ase)].map(([a,v])=>({k:a,n:v.length,r:v.filter(e=>e.ret==="SI").length}));g.forEach(x=>x.p=x.n?x.r/x.n:null);
- const T={n:LM.length,r:LM.filter(e=>e.ret==="SI").length};T.p=T.n?T.r/T.n:null;const mx=Math.max(...g.map(x=>x.p||0),.0001);
- const t=$("#tRetro");if(t._sort==null){t._sort=2;t._dir=-1}
- table("tRetro",[{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},{h:"Monitoreos",v:x=>x.n,t:x=>x.n},{h:"Retroalimentaciones enviadas",v:x=>x.r,t:x=>x.r},{h:"% retro",v:x=>x.p,f:x=>pct(x.p,0),st:x=>heatBad(x.p,mx),t:x=>pct(x.p,0)}],g,T);
-}
-
-const CAUSAS=["Agente","Cliente","Proceso"];
-function renderCausa({B,LM,ym,meses,semL}){
- const cc=[css("--cx-c3"),css("--cx-c1"),css("--red")];   // Agente · Cliente · Proceso (colores del informe del cliente)
- const nv=L=>L.filter(e=>e.efe!=="SI"&&CAUSAS.includes(e.cr));
- const share=L=>{const x=nv(L);return CAUSAS.map(c=>x.length?x.filter(e=>e.cr===c).length/x.length*100:null)};
- mk("cCr1",barCfg(meses.map(ymTxt),CAUSAS.map((c,i)=>({label:c,data:meses.map(m=>share(B.filter(e=>ymOf(e)===m))[i]),backgroundColor:cc[i]})),{title:`Comparativa últimos ${meses.length} meses`}));
- const sm=share(LM);mk("cCr2",barCfg([ymTxt(ym)],CAUSAS.map((c,i)=>({label:c,data:[sm[i]],backgroundColor:cc[i],maxBarThickness:70})),{title:"Causa raíz del mes"}));
- mk("cCr3",barCfg(semL.map(s=>s.split(" ")[0]),CAUSAS.map((c,i)=>({label:c,data:semL.map((_,s)=>share(LM.filter(e=>semMes(e[dateKey])===s+1))[i]),backgroundColor:cc[i]})),{title:"Causa raíz por semana"}));
- // cumple / incumple por asesor (incumple = no venta con causa raíz Agente)
- const inc=v=>v.filter(e=>e.efe!=="SI"&&e.cr==="Agente").length;
- const g=[...groupBy(LM,e=>e.ase)].map(([a,v])=>{const i=inc(v);return{k:a,n:v.length,i,c:v.length-i,p:v.length?i/v.length:null}});
- const T={n:LM.length,i:inc(LM)};T.c=T.n-T.i;T.p=T.n?T.i/T.n:null;const mx=Math.max(...g.map(x=>x.p||0),.0001);
- const t=$("#tCrAse");if(t._sort==null){t._sort=5;t._dir=-1}
- table("tCrAse",[{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},{h:"Monit.",v:x=>x.n,t:x=>x.n},{h:"Cumple",v:x=>x.c,t:x=>x.c},{h:"%",v:x=>x.n?x.c/x.n:null,f:x=>pct(x.n?x.c/x.n:null,0),t:x=>pct(x.n?x.c/x.n:null,0)},
-  {h:"Incumplen",v:x=>x.i,t:x=>x.i},{h:"%",v:x=>x.p,f:x=>pct(x.p,0),st:x=>heatBad(x.p,mx),t:x=>pct(x.p,0)}],g,T);
- // evolutivo por asesor: % incumplen por mes
- const ev=g.map(x=>{const ps=meses.map(m=>{const v=B.filter(e=>e.ase===x.k&&ymOf(e)===m);return v.length?inc(v)/v.length:null});return{k:x.k,ps,d:ps.length>1&&ps[ps.length-1]!=null&&ps[ps.length-2]!=null?ps[ps.length-1]-ps[ps.length-2]:null}});
- table("tCrEvo",[{h:"Asesor",l:1,v:x=>x.k},...meses.map((m,i)=>({h:"% incumplen "+ymTxt(m).slice(0,3).toLowerCase(),v:x=>x.ps[i],f:x=>pct(x.ps[i],0),st:x=>heatBad(x.ps[i],mx)})),
-  {h:"Variación",v:x=>x.d,f:x=>x.d==null?"–":`<span style="color:${x.d>0?"var(--red)":x.d<0?"var(--ok)":"var(--muted)"};font-weight:600">${x.d>0?"+":""}${(x.d*100).toFixed(0)} pts</span>`}],ev);
- // detalle de cada causa
- [["Agente","tCrAg"],["Cliente","tCrCl"],["Proceso","tCrPr"]].forEach(([c,id])=>{
-  const v=LM.filter(e=>e.efe!=="SI"&&e.cr===c),m=new Map();v.forEach(e=>{const d=e.crd||"(sin detalle)";m.set(d,(m.get(d)||0)+1)});
-  const rows=[...m].sort((a,b)=>b[1]-a[1]).map(([d,n])=>({d,n,p:v.length?n/v.length:null}));
-  table(id,[{h:c.toUpperCase(),l:1,v:x=>x.d,f:x=>`<div class="wr">${esc(x.d)}</div>`,t:()=>"Total"},{h:"Cant.",v:x=>x.n,t:()=>v.length},{h:"%",v:x=>x.p,f:x=>pct(x.p,0),t:()=>v.length?"100%":"–"}],rows,v.length?{}:null);
- });
- // evolutivo semanal de incumplimientos (causa agente) por asesor
- const sw=g.map(x=>({k:x.k,s:semL.map((_,i)=>inc(LM.filter(e=>e.ase===x.k&&semMes(e[dateKey])===i+1))),i:x.i})).filter(x=>x.i>0);
- const TS={s:semL.map((_,i)=>inc(LM.filter(e=>semMes(e[dateKey])===i+1))),i:T.i};const mxs=Math.max(...sw.flatMap(x=>x.s),1);
- const ts=$("#tCrSem");if(ts._sort==null){ts._sort=semL.length+1;ts._dir=-1}
- table("tCrSem",[{h:"Asesor que incumple",l:1,v:x=>x.k,t:()=>"Total"},...semL.map((s,i)=>({h:s,v:x=>x.s[i],f:x=>x.s[i]||"",st:x=>heatBad(x.s[i],mxs),t:x=>x.s[i]})),{h:"Total",v:x=>x.i,t:x=>x.i}],sw,TS);
-}
-
-// Plan ofertado leído del texto del analista (misma regla de la presentación)
-const planNorm=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\s+/g," ").trim().toUpperCase();
-function planKey(txt){
- const t=planNorm(txt);if(!t)return null;
- if(/NO APLICA|NO REGISTRADO|TERMINA|CORTA|CUELGA|CULMINA|SIN INTERACC|NO HUBO|NO LLEGA|NO SE DETECTA|NO INTERESAD|NO GENERA|NO HAY|AGEND|NO DESEA|YA TIENE|NO CONTESTA/.test(t))return null;
- const eq=t.match(/IPHONE|XIAOMI|REDMI|HONOR|INFINIX|SAMSUNG|MOTOROLA|OPPO|HUAWEI|TECNO|ZTE/);if(eq)return"Equipo "+eq[0].charAt(0)+eq[0].slice(1).toLowerCase();
- if(/RENOVACION DE EQUIPO/.test(t))return"Renovación de equipo";
- const pr=t.match(/\$\s?(\d+(?:[.,]\d+)?)|(\d+(?:[.,]\d+)?)\s?\$/);const price=pr?Math.floor(parseFloat((pr[1]||pr[2]).replace(",","."))):null;
- const play=t.match(/(\d)\s?PLAY/);if(play)return play[1]+" Play"+(price?" $"+price:"");
- if(price)return"Plan $"+price;return null;
-}
-function renderOfertado({B,LM,ym,meses,semL}){
- const P=pal(),con=L=>L.map(e=>[e,planKey(e.prod)]).filter(x=>x[1]);
- const tot=new Map();con(B.filter(e=>meses.includes(ymOf(e)))).forEach(([,p])=>tot.set(p,(tot.get(p)||0)+1));
- const planes=[...tot].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,8);
- const share=L=>{const x=con(L);return planes.map(p=>x.length?x.filter(y=>y[1]===p).length/x.length*100:null)};
- mk("cOf1",barCfg(meses.map(ymTxt),planes.map((p,i)=>({label:p,data:meses.map(m=>share(B.filter(e=>ymOf(e)===m))[i]),backgroundColor:P[i%P.length]})),{title:`Comparativo últimos ${meses.length} meses`}));
- const sm=share(LM);mk("cOf2",barCfg(planes,[{label:ymTxt(ym),data:sm,backgroundColor:planes.map((p,i)=>P[i%P.length]),maxBarThickness:46}],{title:"Planes ofertados del mes"}));
- mk("cOf3",barCfg(semL.map(s=>s.split(" ")[0]),planes.map((p,i)=>({label:p,data:semL.map((_,s)=>share(LM.filter(e=>semMes(e[dateKey])===s+1))[i]),backgroundColor:P[i%P.length]})),{title:"Ofrecimiento semanal"}));
- const ofM=con(LM),g=[...groupBy(ofM.map(([e,p])=>({...e,_p:p})),e=>e.ase)].map(([a,v])=>({k:a,c:planes.map(p=>v.filter(e=>e._p===p).length),n:v.length}));
- const T={k:"Total",c:planes.map(p=>ofM.filter(x=>x[1]===p).length),n:ofM.length};const mx=Math.max(...g.flatMap(x=>x.c),1);
- const t=$("#tOfAse");if(t._sort==null){t._sort=planes.length+1;t._dir=-1}
- table("tOfAse",[{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},...planes.map((p,i)=>({h:p,v:x=>x.c[i],f:x=>x.c[i]||"",st:x=>x.c[i]?`background:color-mix(in srgb,var(--cx-c3) ${Math.round(18+x.c[i]/mx*50)}%,transparent);font-weight:600`:"",t:x=>x.c[i]})),
-  {h:"Total",v:x=>x.n,t:x=>x.n},{h:"%",v:x=>T.n?x.n/T.n:null,f:x=>pct(T.n?x.n/T.n:null,0),t:()=>T.n?"100%":"–"}],g,T);
- // ofrecimiento de la promoción vigente (ítem "Ofrece promoción vigente")
- const ip=ITEMS.findIndex(x=>/promoci/i.test(x.n));
- const gp=[...groupBy(LM.filter(e=>e.it[ip]!=null),e=>e.ase)].map(([a,v])=>{const no=v.filter(e=>e.it[ip]===0).length;return{k:a,n:v.length,no,si:v.length-no,p:v.length?(v.length-no)/v.length:null}});
- const TP=gp.reduce((s,x)=>({n:s.n+x.n,no:s.no+x.no,si:s.si+x.si}),{n:0,no:0,si:0});TP.p=TP.n?TP.si/TP.n:null;
- table("tOfPromo",[{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},{h:"Ofrecimientos",v:x=>x.n,t:x=>x.n},{h:"No cumple",v:x=>x.no,st:x=>x.no?"color:var(--red);font-weight:600":"",t:x=>x.no},{h:"Sí cumple",v:x=>x.si,t:x=>x.si},{h:"% cumple",v:x=>x.p,f:x=>pct(x.p,0),st:x=>heat(x.p),t:x=>pct(x.p,0)}],gp,TP);
-}
-
-// ---------- Plan de acción: sugerencias por ítem (se revisan antes de enviar) ----------
-const PDA_ITEM=[
- ["Estandarizar el saludo y la despedida según el script.","Escucha de llamadas propias frente a una llamada modelo y práctica del saludo y despedida corporativos.","Saludo y despedida según script en el 100% de las llamadas.","Llamadas con apertura y cierre profesionales y homogéneos."],
- ["Mejorar la escucha activa sin interrumpir al cliente.","Role play de escucha activa: dejar terminar al cliente, parafrasear y confirmar la necesidad antes de responder.","Cero interrupciones en las llamadas monitoreadas.","Necesidad del cliente identificada correctamente."],
- ["Reforzar la amabilidad y la empatía durante la llamada.","Retroalimentación con el audio de la llamada; uso de frases de empatía y tono cordial (sonrisa telefónica).","Trato cordial y empático en el 100% de las llamadas.","Mejor experiencia del cliente y mayor apertura a la oferta."],
- ["Brindar información correcta y completa del producto ofrecido.","Repaso de fichas de producto, tarifas y condiciones, con una evaluación corta de validación.","Información del producto correcta y completa en el 100% de las llamadas.","Ventas sin reclamos por información incompleta o errónea."],
- ["Actualizar los datos del cliente en cada gestión.","Reforzar el paso de validación y actualización de datos dentro del guion de la llamada.","Datos del cliente actualizados en el 100% de las llamadas.","Base de clientes actualizada y contactable."],
- ["Manejar correctamente los tiempos de espera y el hold.","Reforzar el uso del hold: pedir permiso, indicar el tiempo estimado y retomar a tiempo.","Cero esperas sin aviso ni canal abierto.","Llamadas fluidas, sin silencios prolongados."],
- ["Mantener la paciencia y el control de la llamada.","Técnicas de manejo de clientes difíciles y revisión de las llamadas observadas.","Cero comentarios inapropiados en las llamadas monitoreadas.","Atención profesional aun ante clientes molestos."],
- ["Aplicar el protocolo de espera completo.","Practicar el protocolo: solicitar la espera, dar el motivo y agradecer.","Protocolo de espera completo en el 100% de las esperas.","Cliente informado y atendido con cortesía."],
- ["Cerrar correctamente la llamada.","Reforzar el cierre: resumen, confirmación de dudas y despedida según script.","Cierre correcto en el 100% de las llamadas.","Cliente con claridad de lo acordado al terminar la llamada."],
- ["Fortalecer el sondeo de necesidades antes del ofrecimiento.","Reforzar el sondeo con preguntas abiertas y adecuar el plan al uso real del cliente; crear escenarios de la vida cotidiana (trabajo, estudios, familia, emergencias) que muestren la utilidad del plan.","Sondeo y al menos un escenario de necesidad en el 100% de las llamadas.","Oferta ajustada al uso real del cliente y mayor aceptación."],
- ["Fortalecer las habilidades comerciales ante la negativa del cliente.","Ante la primera negativa, rebatir con beneficios del plan y crear escenarios de necesidad cuando el cliente dice no estar interesado o estar satisfecho con las recargas; ofrecimiento escalonado y pre-cierre antes de finalizar.","Rebatir con al menos un beneficio en el 100% de las llamadas con objeción.","Gestión comercial más consultiva y mayor conversión."],
- ["Validar la cobertura o la coordinación de entrega antes del cierre.","Validar cobertura (Fijo) o el proceso de coordinación (Móvil) antes de cerrar la venta.","Cobertura o coordinación validada en el 100% de las ventas.","Ventas sin rechazos por cobertura o entrega."],
- ["Comunicar la promoción vigente en cada ofrecimiento.","Presentar la promoción vigente que acompaña al plan (por ejemplo 5 GB por 24 meses y 15% de descuento) como un beneficio adicional que aporta valor a la oferta.","Promoción comunicada en el 100% de las llamadas segmentadas.","Oferta más atractiva y promoción comunicada oportunamente."],
- ["Registrar y tipificar correctamente la gestión en los aplicativos.","Reforzar el registro de la gestión y revisar con el asesor la matriz de tipificación; evaluar si el error es por desconocimiento, presión de tiempo (TMO) o descuido.","Gestiones registradas y tipificadas correctamente en el 100% de los casos.","Información confiable para operación y calidad."],
- ["Realizar el resumen completo de la venta.","Realizar el resumen de la venta con todos los datos mandatorios antes del cierre.","Resumen completo con datos mandatorios en el 100% de las ventas.","Ventas válidas, sin observaciones posteriores."],
-];
-const PDA_CUM=["Cumplir el protocolo legal y regulatorio de la llamada.","Reforzar el script obligatorio con escucha de la llamada observada y firma de compromiso del asesor.","100% de cumplimiento (ítem crítico) en las llamadas monitoreadas.","Llamadas sin riesgo legal ni regulatorio."];
-const PDA_AG=["Reducir las no ventas atribuibles al asesor.","Revisar con el asesor las llamadas sin venta por causa agente y reforzar rebate, creación de necesidad y cierre.","Cero no ventas por causa agente en el siguiente monitoreo.","Mayor efectividad de venta del asesor."];
-let PDA_ROWS=[];
-function renderPDA({LM,ym}){
- PDA_ROWS=[...groupBy(LM,e=>e.ase)].map(([a,v])=>{
-  const cnt=ITEMS.map((it,i)=>({i,n:v.filter(e=>e.it[i]===0).length})).filter(x=>x.n).sort((x,y)=>y.n-x.n||ITEMS[y.i].g-ITEMS[x.i].g);
-  const ag=v.filter(e=>e.efe!=="SI"&&e.cr==="Agente"),agD=new Map();ag.forEach(e=>{if(e.crd)agD.set(e.crd,(agD.get(e.crd)||0)+1)});
-  if(!cnt.length&&!ag.length)return null;
-  const temas=cnt.slice(0,4).map(x=>`${ITEMS[x.i].n} (${x.n})`);
-  if(ag.length)temas.push(`No venta por causa agente (${ag.length})${agD.size?": "+[...agD].sort((p,q)=>q[1]-p[1]).slice(0,2).map(x=>x[0].toLowerCase()).join("; "):""}`);
-  const top=cnt[0],sug=top?(top.i<PDA_ITEM.length?PDA_ITEM[top.i]:PDA_CUM):PDA_AG;
-  const fs=v.filter(e=>cnt.some(x=>e.it[x.i]===0)||ag.includes(e)).map(e=>e.fm||e.fl).filter(Boolean).sort().slice(-1)[0]||ymFin(ym);
-  return{fs,fr:masDias(fs,3),a,temas,obj:sug[0],acc:sug[1],meta:sug[2],res:sug[3],resp:"CAPACITACIÓN / OPERACIÓN",est:"PENDIENTE",n:cnt.reduce((s,x)=>s+x.n,0)+ag.length};
- }).filter(Boolean).sort((x,y)=>y.n-x.n);
- const H=["Fecha de solicitud","Fecha de refuerzo","Asesor","Temas a mejorar (casos)","Objetivo","Acción","Meta","Resultado esperado","Responsable","Estado"];
- $("#tPda").innerHTML=PDA_ROWS.length?`<thead><tr>${H.map(h=>`<th class="l">${h}</th>`).join("")}</tr></thead><tbody>`+PDA_ROWS.map(r=>`<tr><td>${fdd(r.fs)}</td><td>${fdd(r.fr)}</td><td><b>${esc(r.a)}</b></td><td>${r.temas.map(t=>"• "+esc(t)).join("<br>")}</td><td>${esc(r.obj)}</td><td>${esc(r.acc)}</td><td>${esc(r.meta)}</td><td>${esc(r.res)}</td><td>${r.resp}</td><td><span class="pill mid">${r.est}</span></td></tr>`).join("")+"</tbody>"
-  :filaVacia(10,"Sin incumplimientos ni no ventas por causa agente en el mes: no hay plan de acción que generar.");
-}
-$("#pdaCsv").onclick=()=>{
- const H=["FECHA DE SOLICITUD","FECHA DE REFUERZO","ASESOR","TEMAS A MEJORAR","OBJETIVO","ACCION","META","RESULTADO ESPERADO","RESPONSABLE","ESTADO"];
- const q=s=>'"'+String(s??"").replace(/"/g,'""')+'"';
- const csv=[H.join(";")].concat(PDA_ROWS.map(r=>[fdd(r.fs),fdd(r.fr),r.a,r.temas.join(" / "),r.obj,r.acc,r.meta,r.res,r.resp,r.est].map(q).join(";"))).join("\r\n");
- const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"}));a.download=`Plan de accion OUT - ${ymTxt(mesRef())}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-};
-
-
 // ---------- render ----------
 function render(){
  const L=filtered(),A=agg(L);S.L=L;S.A=A;
  $("#cnt").textContent=`${L.length} de ${DATA.length} evaluaciones`;
  const ds=DATA.map(e=>e[dateKey]).filter(Boolean).sort();
  $("#subt").textContent=`Evaluaciones de ventas · ${fmtD(ds[0])} al ${fmtD(ds[ds.length-1])}/2026 · ${DATA.length} monitoreos`;
- renderHero(L,A);renderTime(L,A);renderSup(L,A);renderAse(L,A);renderMot(L,A);renderItems(L);renderVenta(L);renderDet(L);renderInforme();
+ renderHero(L,A);renderTime(L,A);renderSup(L,A);renderAse(L,A);renderMot(L,A);renderItems(L);renderVenta(L);renderDet(L);
 }
 function renderHero(L,A){
  $("#hFinal").innerHTML=A.fin==null?"–":`${(A.fin*100).toFixed(1)}<small>%</small>`;

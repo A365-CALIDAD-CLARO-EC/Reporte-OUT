@@ -526,5 +526,14 @@ $("#dlgAse").addEventListener("click",e=>{if(e.target===$("#dlgAse"))$("#dlgAse"
 buildFilters();$("#hmDim").onchange=()=>renderHeat(S.L);$("#q").oninput=()=>renderDet(S.L);$("#onlyEC").onchange=()=>renderDet(S.L);
 render();method();
 </script>
+<!-- CENTRAL: vista cliente sin Presentación -->
+<script>
+// Abierto para el cliente (CENTRAL agrega ?cliente): sin el enlace a la Presentación interna.
+if (new URLSearchParams(location.search).has('cliente')) {
+  const quitar = () => document.querySelectorAll('a[href*="PRESENTACI"]').forEach(a => a.remove());
+  quitar();
+  document.addEventListener('DOMContentLoaded', quitar);
+}
+</script>
 </body>
 </html>

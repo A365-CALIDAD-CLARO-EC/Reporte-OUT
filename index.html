@@ -185,7 +185,7 @@ main{padding-bottom:10px}
 <div class="bar"><div class="wrap">
  <div class="filters" id="filters"></div>
  <nav class="sec" aria-label="Secciones">
-  <a href="#resumen">Resumen</a><a href="#tiempo">Evolución</a><a href="#supervisor">Supervisor</a><a href="#" id="openAse">Ranking asesor</a><a href="#motivo">Motivo de llamada</a><a href="#items">Ítems de la pauta</a><a href="#venta">Efectividad y causa raíz</a><a href="#detalle">Detalle</a><a href="#metodo">Metodología</a>
+  <a href="#resumen">Resumen</a><a href="#tiempo">Evolución</a><a href="#supervisor">Supervisor</a><a href="#" id="openAse">Ranking asesor</a><a href="#motivo">Motivo de llamada</a><a href="#items">Ítems de la pauta</a><a href="#venta">Efectividad y causa raíz</a><a href="#" id="openDet">Detalle</a><a href="#metodo">Metodología</a>
  </nav>
 </div></div>
 <main class="wrap">
@@ -246,12 +246,6 @@ main{padding-bottom:10px}
  <div style="margin-top:14px;display:flex;justify-content:flex-end"><button type="button" id="openNov">Más detalles · <span id="novCnt">0</span> no ventas</button></div>
 </section>
 
-<section id="detalle">
- <h2>Detalle de evaluaciones</h2>
- <p class="lead">Haz clic en una fila para ver los ítems incumplidos y la observación del analista.</p>
- <div class="tools"><label>Buscar <input id="q" type="search" placeholder="Asesor, producto, observación…"></label><label><input type="checkbox" id="onlyEC"> Solo con error crítico</label></div>
- <div class="tw"><table id="tDet"></table></div>
-</section>
 
 <section id="metodo">
  <h2>Metodología y calidad de datos</h2>
@@ -261,6 +255,11 @@ main{padding-bottom:10px}
 <dialog id="dlgNov" aria-labelledby="dlgNovTitle">
  <div class="dhead"><div><h2 id="dlgNovTitle">Detalle de no ventas</h2><p class="lead" id="dlgNovSub"></p></div><button type="button" id="closeNov" class="pri">Cerrar</button></div>
  <div class="tw"><table id="tNov"></table></div>
+</dialog>
+<dialog id="dlgDet" aria-labelledby="dlgDetTitle">
+ <div class="dhead"><div><h2 id="dlgDetTitle">Detalle de evaluaciones</h2><p class="lead" id="dlgDetSub">Haz clic en una fila para ver los ítems incumplidos y la observación del analista.</p></div><button type="button" id="closeDet" class="pri">Cerrar</button></div>
+ <div class="tools"><label>Buscar <input id="q" type="search" placeholder="Asesor, producto, observación…"></label><label><input type="checkbox" id="onlyEC"> Solo con error crítico</label></div>
+ <div class="tw" style="max-height:calc(90vh - 180px)"><table id="tDet"></table></div>
 </dialog>
 <dialog id="dlgAse" aria-labelledby="dlgTitle">
  <div class="dhead"><div><h2 id="dlgTitle">Ranking asesor</h2><p class="lead" id="dlgSub"></p></div><button type="button" id="closeAse" class="pri">Cerrar</button></div>
@@ -514,6 +513,7 @@ function renderDet(L){
   h+=`<tr class="det" hidden data-d="${j}"><td colspan="${6+BLOCKS.length}"><strong>Producto:</strong> ${esc(e.prod)} · <strong>Supervisor:</strong> ${esc(e.sup)} · <strong>Causa raíz:</strong> ${esc(e.cr)} · <strong>Ítems no aplica:</strong> ${nas} de 20<br>${fails?`<strong>Ítems incumplidos:</strong><ul class="fails">${fails}</ul>`:"<strong>Sin ítems incumplidos.</strong><br>"}<strong>Observación:</strong> ${esc(e.obs)}</td></tr>`});
  if(!r.length)h+=`<tr><td colspan="${6+BLOCKS.length}" class="empty">Ninguna evaluación coincide con la búsqueda.</td></tr>`;
  $("#tDet").innerHTML=h+"</tbody>";
+ $("#dlgDetSub").textContent=`${r.length} de ${L.length} evaluaciones con los filtros actuales. Haz clic en una fila para ver los ítems incumplidos y la observación del analista.`;
  $("#tDet").querySelectorAll("tr.ev").forEach(tr=>{const t=()=>{const d=$("#tDet").querySelector(`tr[data-d="${tr.dataset.j}"]`);d.hidden=!d.hidden};tr.onclick=t;tr.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();t()}}});
 }
 function method(){
@@ -531,6 +531,8 @@ function method(){
 document.querySelectorAll(".sw button").forEach(b=>b.onclick=()=>{TMODE=b.dataset.v;document.querySelectorAll(".sw button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderTime(S.L,S.A)});
 $("#openAse").onclick=e=>{e.preventDefault();$("#dlgAse").showModal()};$("#closeAse").onclick=()=>$("#dlgAse").close();
 $("#dlgAse").addEventListener("click",e=>{if(e.target===$("#dlgAse"))$("#dlgAse").close()});
+$("#openDet").onclick=e=>{e.preventDefault();$("#dlgDet").showModal()};$("#closeDet").onclick=()=>$("#dlgDet").close();
+$("#dlgDet").addEventListener("click",e=>{if(e.target===$("#dlgDet"))$("#dlgDet").close()});
 $("#openNov").onclick=()=>$("#dlgNov").showModal();$("#closeNov").onclick=()=>$("#dlgNov").close();
 $("#dlgNov").addEventListener("click",e=>{if(e.target===$("#dlgNov"))$("#dlgNov").close()});
 buildFilters();$("#hmDim").onchange=()=>renderHeat(S.L);$("#q").oninput=()=>renderDet(S.L);$("#onlyEC").onchange=()=>renderDet(S.L);

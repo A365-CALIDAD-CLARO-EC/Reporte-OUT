@@ -222,7 +222,7 @@ main{padding-bottom:10px}
  <h2>Por motivo de llamada</h2>
  <p class="lead">Motivo = campaña (Outbound Migración / Renovación, Inbound Renovación / Captación). "% del total de quiebres" combina volumen y tasa: señala el motivo que más aporta a los errores críticos.</p>
  <div class="tw"><table id="tMot"></table></div><div class="panel" style="margin-top:14px"><div class="chart"><canvas id="cMot"></canvas></div></div>
- <div class="tw" style="margin-top:14px"><table id="tProd"></table></div>
+ <div style="margin-top:14px;display:flex;justify-content:flex-end"><button type="button" id="openProd">Más detalles · <span id="prodCnt">0</span> productos ofertados</button></div>
 </section>
 
 <section id="items">
@@ -260,6 +260,10 @@ main{padding-bottom:10px}
  <div class="dhead"><div><h2 id="dlgDetTitle">Detalle de evaluaciones</h2><p class="lead" id="dlgDetSub">Haz clic en una fila para ver los ítems incumplidos y la observación del analista.</p></div><button type="button" id="closeDet" class="pri">Cerrar</button></div>
  <div class="tools"><label>Buscar <input id="q" type="search" placeholder="Asesor, producto, observación…"></label><label><input type="checkbox" id="onlyEC"> Solo con error crítico</label></div>
  <div class="tw" style="max-height:calc(90vh - 180px)"><table id="tDet"></table></div>
+</dialog>
+<dialog id="dlgProd" aria-labelledby="dlgProdTitle">
+ <div class="dhead"><div><h2 id="dlgProdTitle">Producto ofertado</h2><p class="lead" id="dlgProdSub"></p></div><button type="button" id="closeProd" class="pri">Cerrar</button></div>
+ <div class="tw"><table id="tProd"></table></div>
 </dialog>
 <dialog id="dlgAse" aria-labelledby="dlgTitle">
  <div class="dhead"><div><h2 id="dlgTitle">Ranking asesor</h2><p class="lead" id="dlgSub"></p></div><button type="button" id="closeAse" class="pri">Cerrar</button></div>
@@ -465,6 +469,8 @@ function renderMot(L,A){
   plugins:{title:{display:true,text:"Volumen vs quiebre (tamaño = N° de quiebres)"},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw.x} evals, ${c.raw.y.toFixed(0)}% quiebre`}}}}});
  const pr=[...groupBy(L,e=>e.prod)].map(([k,v])=>({k,a:agg(v)})).sort((a,b)=>b.a.n-a.a.n);
  table("tProd",[{h:"Producto ofertado (texto del analista)",l:1,v:x=>x.k},{h:"Evals",v:x=>x.a.n},{h:"PEC final",v:x=>x.a.fin,f:x=>`<span class="pill ${tone(x.a.fin)}">${pct(x.a.fin)}</span>`},{h:"% error crítico",v:x=>x.a.ec,f:x=>pct(x.a.ec),st:x=>heatBad(x.a.ec,.6)},{h:"Venta concretada",v:x=>x.a.efe,f:x=>pct(x.a.efe)}],pr);
+ $("#prodCnt").textContent=pr.length;
+ $("#dlgProdSub").textContent=`${pr.length} productos (texto que registra el analista) en ${L.length} evaluaciones con los filtros actuales. Ordena con clic en los encabezados.`;
 }
 function itemStats(L){return ITEMS.map((it,i)=>{const ap=L.filter(e=>e.it[i]!=null).length,nc=L.filter(e=>e.it[i]===0).length;const q=ap?nc/ap:null;return{...it,i,ap,nc,na:L.length?(L.length-ap)/L.length:null,q,lost:q==null?0:q*it.g}})}
 function renderItems(L){
@@ -533,6 +539,8 @@ $("#openAse").onclick=e=>{e.preventDefault();$("#dlgAse").showModal()};$("#close
 $("#dlgAse").addEventListener("click",e=>{if(e.target===$("#dlgAse"))$("#dlgAse").close()});
 $("#openDet").onclick=e=>{e.preventDefault();$("#dlgDet").showModal()};$("#closeDet").onclick=()=>$("#dlgDet").close();
 $("#dlgDet").addEventListener("click",e=>{if(e.target===$("#dlgDet"))$("#dlgDet").close()});
+$("#openProd").onclick=()=>$("#dlgProd").showModal();$("#closeProd").onclick=()=>$("#dlgProd").close();
+$("#dlgProd").addEventListener("click",e=>{if(e.target===$("#dlgProd"))$("#dlgProd").close()});
 $("#openNov").onclick=()=>$("#dlgNov").showModal();$("#closeNov").onclick=()=>$("#dlgNov").close();
 $("#dlgNov").addEventListener("click",e=>{if(e.target===$("#dlgNov"))$("#dlgNov").close()});
 buildFilters();$("#hmDim").onchange=()=>renderHeat(S.L);$("#q").oninput=()=>renderDet(S.L);$("#onlyEC").onchange=()=>renderDet(S.L);

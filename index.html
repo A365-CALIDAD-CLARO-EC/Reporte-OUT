@@ -243,7 +243,7 @@ main{padding-bottom:10px}
   <div class="panel"><div class="chart"><canvas id="cEfe"></canvas></div></div>
   <div class="panel"><div class="chart"><canvas id="cCausa"></canvas></div></div>
  </div>
- <div class="tw" style="margin-top:14px"><table id="tNov"></table></div>
+ <div style="margin-top:14px;display:flex;justify-content:flex-end"><button type="button" id="openNov">Más detalles · <span id="novCnt">0</span> no ventas</button></div>
 </section>
 
 <section id="detalle">
@@ -258,6 +258,10 @@ main{padding-bottom:10px}
  <div class="panel method" id="method"></div>
 </section>
 </main>
+<dialog id="dlgNov" aria-labelledby="dlgNovTitle">
+ <div class="dhead"><div><h2 id="dlgNovTitle">Detalle de no ventas</h2><p class="lead" id="dlgNovSub"></p></div><button type="button" id="closeNov" class="pri">Cerrar</button></div>
+ <div class="tw"><table id="tNov"></table></div>
+</dialog>
 <dialog id="dlgAse" aria-labelledby="dlgTitle">
  <div class="dhead"><div><h2 id="dlgTitle">Ranking asesor</h2><p class="lead" id="dlgSub"></p></div><button type="button" id="closeAse" class="pri">Cerrar</button></div>
  <div class="tw"><table id="tAse"></table></div>
@@ -497,6 +501,8 @@ function renderVenta(L){
   options:{maintainAspectRatio:false,cutout:"58%",plugins:{title:{display:true,text:"Causa raíz principal (N° evaluaciones)"},legend:{position:"bottom"}}}});
  const nv=L.filter(e=>e.efe!=="SI"&&e.nov).map(e=>({...e}));
  table("tNov",[{h:"Fecha",l:1,v:x=>x[dateKey],f:x=>fmtD(x[dateKey])},{h:"Asesor",l:1,v:x=>x.ase},{h:"Motivo",l:1,v:x=>x.camp},{h:"Causa raíz",l:1,v:x=>x.cr},{h:"PEC final",v:x=>x.fin,f:x=>`<span class="pill ${tone(x.fin)}">${pct(x.fin)}</span>`},{h:"¿Por qué no se concretó la venta?",l:1,v:x=>x.nov,f:x=>`<span style="white-space:normal;display:block;min-width:320px">${esc(x.nov)}</span>`}],nv);
+ $("#novCnt").textContent=nv.length;
+ $("#dlgNovSub").textContent=`${nv.length} evaluaciones sin venta con los filtros actuales, con la causa raíz y el motivo que registró el analista. Ordena con clic en los encabezados.`;
 }
 function renderDet(L){
  const q=$("#q").value.toLowerCase(),only=$("#onlyEC").checked;
@@ -525,6 +531,8 @@ function method(){
 document.querySelectorAll(".sw button").forEach(b=>b.onclick=()=>{TMODE=b.dataset.v;document.querySelectorAll(".sw button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderTime(S.L,S.A)});
 $("#openAse").onclick=e=>{e.preventDefault();$("#dlgAse").showModal()};$("#closeAse").onclick=()=>$("#dlgAse").close();
 $("#dlgAse").addEventListener("click",e=>{if(e.target===$("#dlgAse"))$("#dlgAse").close()});
+$("#openNov").onclick=()=>$("#dlgNov").showModal();$("#closeNov").onclick=()=>$("#dlgNov").close();
+$("#dlgNov").addEventListener("click",e=>{if(e.target===$("#dlgNov"))$("#dlgNov").close()});
 buildFilters();$("#hmDim").onchange=()=>renderHeat(S.L);$("#q").oninput=()=>renderDet(S.L);$("#onlyEC").onchange=()=>renderDet(S.L);
 render();method();
 </script>

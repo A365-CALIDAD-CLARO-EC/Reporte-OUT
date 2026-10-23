@@ -104,6 +104,8 @@ tr.det td{white-space:normal;text-align:left;background:var(--soft);font-size:13
 dialog{width:min(1240px,96vw);max-height:90vh;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--bg);color:var(--ink)}
 dialog::backdrop{background:rgba(10,14,22,.55)}
 dialog .tw{max-height:calc(90vh - 130px);overflow:auto}
+.qtag{display:inline-block;min-width:30px;padding:1px 8px;border-radius:10px;color:#fff;font-weight:700;font-size:12px;text-align:center}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--track)}
 .dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .empty{padding:40px;text-align:center;color:var(--muted)}
 @media (max-width:1100px){.pecs{grid-template-columns:repeat(3,1fr)}.kpis{grid-template-columns:repeat(4,1fr)}.kpi:nth-child(5){border-left:0}.kpi:nth-child(n+5){border-top:1px solid var(--line)}}
@@ -185,7 +187,7 @@ main{padding-bottom:10px}
 <div class="bar"><div class="wrap">
  <div class="filters" id="filters"></div>
  <nav class="sec" aria-label="Secciones">
-  <a href="#resumen">Resumen</a><a href="#tiempo">Evolución</a><a href="#supervisor">Supervisor</a><a href="#" id="openAse">Ranking asesor</a><a href="#motivo">Motivo de llamada</a><a href="#items">Ítems de la pauta</a><a href="#venta">Efectividad y causa raíz</a><a href="#" id="openDet">Detalle</a><a href="#metodo">Metodología</a>
+  <a href="#resumen">Resumen</a><a href="#tiempo">Evolución</a><a href="#supervisor">Supervisor</a><a href="#cuartil">Cuartiles</a><a href="#" id="openAse">Ranking asesor</a><a href="#motivo">Motivo de llamada</a><a href="#items">Ítems de la pauta</a><a href="#venta">Efectividad y causa raíz</a><a href="#" id="openDet">Detalle</a><a href="#metodo">Metodología</a>
  </nav>
 </div></div>
 <main class="wrap">
@@ -217,6 +219,15 @@ main{padding-bottom:10px}
  <div class="tw"><table id="tSup"></table></div>
 </section>
 
+
+<section id="cuartil">
+ <h2>Cuartiles</h2>
+ <p class="lead">Cuartiles simétricos por PEC final, igual que en Entel: los asesores se ordenan de mayor a menor PEC final y se reparten en cuatro grupos del mismo tamaño. Q1 = mejor 25%, Q4 = peor 25%. Se recalculan con los filtros (menos Asesor y Cuartil). Haz clic en un cuartil o en un supervisor para ver la lista de asesores y armar el PDA.</p>
+ <div class="grid2e">
+  <div><h3 style="margin:0 0 8px;font-size:16px">Resumen por cuartil</h3><div class="tw"><table id="tCuar"></table></div></div>
+  <div><h3 style="margin:0 0 8px;font-size:16px">Asesores por cuartil y supervisor</h3><div class="tw"><table id="tCuarSup"></table></div></div>
+ </div>
+</section>
 
 <section id="motivo">
  <h2>Por motivo de llamada</h2>
@@ -265,6 +276,10 @@ main{padding-bottom:10px}
  <div class="dhead"><div><h2 id="dlgProdTitle">Producto ofertado</h2><p class="lead" id="dlgProdSub"></p></div><button type="button" id="closeProd" class="pri">Cerrar</button></div>
  <div class="tw"><table id="tProd"></table></div>
 </dialog>
+<dialog id="dlgCuar" aria-labelledby="dlgCuarTitle">
+ <div class="dhead"><div><h2 id="dlgCuarTitle">Asesores</h2><p class="lead" id="dlgCuarSub"></p></div><div style="display:flex;gap:8px"><button type="button" id="copyCuar">Copiar para PDA</button><button type="button" id="closeCuar" class="pri">Cerrar</button></div></div>
+ <div class="tw" style="max-height:calc(90vh - 180px)"><table id="tCuarDlg"></table></div>
+</dialog>
 <dialog id="dlgAse" aria-labelledby="dlgTitle">
  <div class="dhead"><div><h2 id="dlgTitle">Ranking asesor</h2><p class="lead" id="dlgSub"></p></div><button type="button" id="closeAse" class="pri">Cerrar</button></div>
  <div class="tw"><table id="tAse"></table></div>
@@ -296,6 +311,10 @@ DATA.forEach(e=>{
  e.ec=e.ecItems.length;e.copc=e.fin==null?null:(e.ec?0:e.fin);
 });
 let META=0.85, dateKey="fl";
+// cuartiles (como Entel): simétricos por PEC final del asesor; Q1 = mejor 25%, Q4 = peor 25%
+const CUAR_L={Q1:"mejor 25%",Q2:"2.º 25%",Q3:"3.er 25%",Q4:"peor 25%"},CUAR_C={Q1:"#1a9d63",Q2:"#0a5ad1",Q3:"#e08a00",Q4:"#e0324c"};
+let CQ={};
+const qtag=q=>q?`<span class="qtag" style="background:${CUAR_C[q]}" title="${CUAR_L[q]}">${q}</span>`:"–";
 const S={};
 function agg(L){
  const n=L.length,bp=BLOCKS.map((b,k)=>mean(L.map(e=>e.bp[k])));
@@ -349,10 +368,10 @@ function DiasPicker(host,onChange){
 // ---------- filters ----------
 let DIAS=null;
 const fechasBase=()=>[...new Set(DATA.map(e=>e[dateKey]).filter(Boolean))].sort();
-const FILT=[["mes","Mes"],["sup","Supervisor"],["ase","Asesor"],["camp","Motivo de llamada"],["ges","Gestión"],["efe","Venta concretada"],["cr","Causa raíz"],["tm","Tipo de monitoreo"]];
+const FILT=[["mes","Mes"],["sup","Supervisor"],["ase","Asesor"],["cuar","Cuartil"],["camp","Motivo de llamada"],["ges","Gestión"],["efe","Venta concretada"],["cr","Causa raíz"],["tm","Tipo de monitoreo"]];
 const MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],MES_ORD={};
 function mesLabel(ds){const l=MESES[+ds.slice(5,7)-1]+" "+ds.slice(0,4);MES_ORD[l]=ds.slice(0,7);return l}   // mes según la Fecha base elegida
-function keyOf(e,k){return k==="wk"?(e[dateKey]?wkLabel(e[dateKey]):null):k==="mes"?(e[dateKey]?mesLabel(e[dateKey]):null):e[k]}
+function keyOf(e,k){return k==="cuar"?(CQ[e.ase]||null):k==="wk"?(e[dateKey]?wkLabel(e[dateKey]):null):k==="mes"?(e[dateKey]?mesLabel(e[dateKey]):null):e[k]}
 function buildFilters(){
  let h=`<label class="f">Fecha base<select id="fDate"><option value="fl">Fecha de llamada</option><option value="fm">Fecha de monitoreo</option></select></label><div class="f" style="max-width:none;flex:0 0 auto">Días<div id="fDias"></div></div>`;
  FILT.forEach(([k,l])=>{h+=`<label class="f">${l}<select data-k="${k}"></select></label>`});
@@ -365,8 +384,8 @@ function buildFilters(){
  $("#fMeta").oninput=e=>{const v=parseFloat(e.target.value);if(!isNaN(v)){META=v/100;render()}};
  $("#reset").onclick=()=>{document.querySelectorAll("#filters select[data-k]").forEach(s=>s.value="");DIAS.clear();render()};
 }
-function fillOpts(){document.querySelectorAll("#filters select[data-k]").forEach(s=>{const k=s.dataset.k,cur=s.value;const vals=[...new Set(DATA.map(e=>keyOf(e,k)).filter(Boolean))].sort((a,b)=>k==="wk"?(WK_ORD[a]<WK_ORD[b]?-1:1):k==="mes"?(MES_ORD[a]<MES_ORD[b]?-1:1):(a<b?-1:a>b?1:0));s.innerHTML=`<option value="">Todos</option>`+vals.map(v=>`<option${v===cur?" selected":""}>${esc(v)}</option>`).join("")})}
-function filtered(){const sel=[...document.querySelectorAll("#filters select[data-k]")].filter(s=>s.value);return DATA.filter(e=>DIAS.has(e[dateKey])&&sel.every(s=>keyOf(e,s.dataset.k)===s.value))}
+function fillOpts(){document.querySelectorAll("#filters select[data-k]").forEach(s=>{const k=s.dataset.k,cur=s.value;const vals=k==="cuar"?["Q1","Q2","Q3","Q4"]:[...new Set(DATA.map(e=>keyOf(e,k)).filter(Boolean))].sort((a,b)=>k==="wk"?(WK_ORD[a]<WK_ORD[b]?-1:1):k==="mes"?(MES_ORD[a]<MES_ORD[b]?-1:1):(a<b?-1:a>b?1:0));s.innerHTML=`<option value="">Todos</option>`+vals.map(v=>`<option${v===cur?" selected":""}>${esc(v)}</option>`).join("")})}
+function filtered(skip=[]){const sel=[...document.querySelectorAll("#filters select[data-k]")].filter(s=>s.value&&!skip.includes(s.dataset.k));return DATA.filter(e=>DIAS.has(e[dateKey])&&sel.every(s=>keyOf(e,s.dataset.k)===s.value))}
 
 // ---------- charts ----------
 const CH={};
@@ -382,9 +401,11 @@ function drawTable(t){
  if(t._sort!=null&&!cols[t._sort])t._sort=null;   // la tabla cambió de columnas (otro mes)
  if(t._sort!=null){const c=cols[t._sort];r.sort((a,b)=>{let x=c.v(a),y=c.v(b);if(x==null)return 1;if(y==null)return -1;return (x>y?1:x<y?-1:0)*(t._dir)})}
  let h="<thead><tr>"+cols.map((c,i)=>`<th tabindex="0" class="${c.l?"l ":""}${t._sort===i?(t._dir>0?"s-asc":"s-desc"):""}" data-i="${i}">${c.h}</th>`).join("")+"</tr></thead><tbody>";
- h+=r.length?r.map(x=>"<tr>"+cols.map(c=>`<td class="${c.l?"l":"h"}" style="${c.st?c.st(x):""}">${c.f?c.f(x):esc(c.v(x))}</td>`).join("")+"</tr>").join(""):`<tr><td colspan="${cols.length}" class="empty">Sin evaluaciones para estos filtros.</td></tr>`;
+ const onRow=t._opt&&t._opt.onRow;
+ h+=r.length?r.map((x,ri)=>(onRow?`<tr class="click" tabindex="0" data-r="${ri}">`:"<tr>")+cols.map(c=>`<td class="${c.l?"l":"h"}" style="${c.st?c.st(x):""}">${c.f?c.f(x):esc(c.v(x))}</td>`).join("")+"</tr>").join(""):`<tr><td colspan="${cols.length}" class="empty">Sin evaluaciones para estos filtros.</td></tr>`;
  if(total)h+=`<tr class="tot">`+cols.map(c=>`<td class="${c.l?"l":"h"}">${c.t?c.t(total):""}</td>`).join("")+"</tr>";
  t.innerHTML=h+"</tbody>";
+ if(onRow)t.querySelectorAll("tbody tr.click").forEach(tr=>{const go=()=>onRow(r[+tr.dataset.r]);tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter")go()}});
  t.querySelectorAll("th").forEach(th=>{const go=()=>{const i=+th.dataset.i;if(t._sort===i)t._dir*=-1;else{t._sort=i;t._dir=cols[i].l?1:-1}drawTable(t)};th.onclick=go;th.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
 }
 const blockCols=(get)=>BLOCKS.map((b,k)=>({h:`<span class="bdot" style="background:${b.c}"></span>${b.s} %`,v:x=>get(x).bp[k],f:x=>pct(get(x).bp[k]),st:x=>heat(get(x).bp[k]),t:a=>pct(a.bp[k])}));
@@ -396,12 +417,17 @@ function stdCols(first,get,extra=[]){if(!first.t)first.t=()=>"Total";return[firs
 
 
 // ---------- render ----------
+function calcCuartiles(){
+ const ord=[...groupBy(filtered(["ase","cuar"]),e=>e.ase)].map(([n,v])=>({n,fin:agg(v).fin})).filter(d=>d.fin!=null).sort((a,b)=>b.fin-a.fin);
+ CQ={};ord.forEach((d,i)=>{const p=ord.length>1?i/(ord.length-1):0;CQ[d.n]=p<=.25?"Q1":p<=.5?"Q2":p<=.75?"Q3":"Q4"});
+}
 function render(){
+ calcCuartiles();
  const L=filtered(),A=agg(L);S.L=L;S.A=A;
  $("#cnt").textContent=`${L.length} de ${DATA.length} evaluaciones`;
  const ds=DATA.map(e=>e[dateKey]).filter(Boolean).sort();
  $("#subt").textContent=`Evaluaciones de ventas · ${fmtD(ds[0])} al ${fmtD(ds[ds.length-1])}/2026 · ${DATA.length} monitoreos`;
- renderHero(L,A);renderTime(L,A);renderSup(L,A);renderAse(L,A);renderMot(L,A);renderItems(L);renderVenta(L);renderDet(L);
+ renderHero(L,A);renderTime(L,A);renderSup(L,A);renderCuartiles();renderAse(L,A);renderMot(L,A);renderItems(L);renderVenta(L);renderDet(L);
 }
 function renderHero(L,A){
  $("#hFinal").innerHTML=A.fin==null?"–":`${(A.fin*100).toFixed(1)}<small>%</small>`;
@@ -456,9 +482,41 @@ function renderAse(L,A){
  const r=g.filter(x=>x.a.fin!=null).sort((a,b)=>b.a.fin-a.a.fin);r.forEach((x,i)=>x.rk=i+1);
  const t=$("#tAse");if(t._sort==null){t._sort=0;t._dir=1}
  const cols=stdCols({h:"Ranking",v:x=>x.rk,f:x=>x.rk??"–",t:()=>""},x=>x.a,[{h:"Venta concretada",v:x=>x.a.efe,f:x=>pct(x.a.efe),t:a=>pct(a.efe)}]);
- cols.splice(1,0,{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},{h:"Supervisor",l:1,v:x=>x.sup});
+ cols.splice(1,0,{h:"Asesor",l:1,v:x=>x.k,t:()=>"Total"},{h:"Cuartil",v:x=>CQ[x.k]||"",f:x=>qtag(CQ[x.k])},{h:"Supervisor",l:1,v:x=>x.sup});
  table("tAse",cols,g,A);
  $("#dlgSub").textContent=`${g.length} asesores · ${L.length} evaluaciones con los filtros actuales. Ordena con clic en los encabezados. Color por bloque: rojo bajo 70%, ámbar hasta la meta, verde en meta o más.`;
+}
+function renderCuartiles(){
+ const base=filtered(["ase","cuar"]).filter(e=>CQ[e.ase]);
+ const qs=["Q1","Q2","Q3","Q4"].map(q=>{const x=base.filter(e=>CQ[e.ase]===q),fs=[...groupBy(x,e=>e.ase)].map(([,y])=>agg(y).fin);
+  return {q,a:agg(x),ases:fs.length,min:fs.length?Math.min(...fs):null,max:fs.length?Math.max(...fs):null}});
+ table("tCuar",[{h:"Cuartil",l:1,v:x=>x.q,f:x=>`${qtag(x.q)} <span class="note">${CUAR_L[x.q]}</span>`},{h:"Asesores",v:x=>x.ases},{h:"Evals",v:x=>x.a.n},
+  {h:"Rango PEC del asesor",v:x=>x.max,f:x=>x.min==null?"–":`${pct(x.min)} – ${pct(x.max)}`},
+  {h:"PEC final",v:x=>x.a.fin,f:x=>`<span class="pill ${tone(x.a.fin)}">${pct(x.a.fin)}</span>`},{h:"Nota COPC",v:x=>x.a.copc,f:x=>pct(x.a.copc)},
+  {h:"% error crítico",v:x=>x.a.ec,f:x=>pct(x.a.ec),st:x=>heatBad(x.a.ec,.6)},{h:"Venta concretada",v:x=>x.a.efe,f:x=>pct(x.a.efe)}],
+  qs,null,{onRow:x=>cuarOpen(`${x.q} · ${CUAR_L[x.q]}`,base.filter(e=>CQ[e.ase]===x.q))});
+ const sups=[...groupBy(base,e=>e.sup)].map(([k,x])=>{const as=[...new Set(x.map(e=>e.ase))],c={};["Q1","Q2","Q3","Q4"].forEach(q=>c[q]=as.filter(a=>CQ[a]===q).length);
+  return {k,n:as.length,c,bajo:as.length?(c.Q3+c.Q4)/as.length:null,fin:agg(x).fin,x}});
+ const t=$("#tCuarSup");if(t._sort==null){t._sort=6;t._dir=-1}
+ table("tCuarSup",[{h:"Supervisor",l:1,v:x=>x.k},{h:"Asesores",v:x=>x.n},...["Q1","Q2","Q3","Q4"].map(q=>({h:qtag(q),v:x=>x.c[q]})),
+  {h:"% en Q3 + Q4",v:x=>x.bajo,f:x=>pct(x.bajo,0)},{h:"PEC final",v:x=>x.fin,f:x=>`<span class="pill ${tone(x.fin)}">${pct(x.fin)}</span>`}],
+  sups,null,{onRow:x=>cuarOpen("Asesores de "+x.k,x.x)});
+}
+// ventana: asesores de un cuartil o de un supervisor, con lo que más falla (insumo para el PDA)
+let CUAR_DATA=[];
+function cuarOpen(titulo,L){
+ CUAR_DATA=[...groupBy(L,e=>e.ase)].map(([n,v])=>({n,q:CQ[n],sup:[...new Set(v.map(e=>e.sup))].join(", "),a:agg(v),
+  fallas:itemStats(v).filter(i=>i.nc>0).sort((a,b)=>b.nc-a.nc||b.g-a.g).slice(0,3)}));
+ const A=agg(L);
+ $("#dlgCuarTitle").textContent=titulo;
+ $("#dlgCuarSub").textContent=`${CUAR_DATA.length} asesores · ${A.n} evaluaciones · PEC final ${pct(A.fin)}. «Copiar para PDA» copia la lista para pegarla en Excel. Clic en un asesor para filtrar el reporte.`;
+ const t=$("#tCuarDlg");t._sort=4;t._dir=1;
+ table("tCuarDlg",[{h:"Asesor",l:1,v:x=>x.n},{h:"Cuartil",v:x=>x.q||"",f:x=>qtag(x.q)},{h:"Supervisor",l:1,v:x=>x.sup},{h:"Evals",v:x=>x.a.n},
+  {h:"PEC final",v:x=>x.a.fin,f:x=>`<span class="pill ${tone(x.a.fin)}">${pct(x.a.fin)}</span>`},{h:"Nota COPC",v:x=>x.a.copc,f:x=>pct(x.a.copc)},
+  {h:"% error crítico",v:x=>x.a.ec,f:x=>pct(x.a.ec),st:x=>heatBad(x.a.ec,.6)},{h:"Venta concretada",v:x=>x.a.efe,f:x=>pct(x.a.efe)},
+  {h:"Ítems a reforzar (veces que falló)",l:1,v:x=>x.fallas.length?x.fallas[0].nc:0,f:x=>x.fallas.length?`<span style="white-space:normal;display:block;min-width:260px">${x.fallas.map(i=>`${esc(i.n)} (${i.nc})${i.c?' <span class="pill bad">crítico</span>':""}`).join("<br>")}</span>`:"Sin fallas"}],
+  CUAR_DATA,null,{onRow:x=>{$("#dlgCuar").close();const s=document.querySelector('#filters select[data-k="ase"]');s.value=x.n;render()}});
+ if(!$("#dlgCuar").open)$("#dlgCuar").showModal();
 }
 function renderMot(L,A){
  const g=[...groupBy(L,e=>e.camp)].map(([k,v])=>({k,a:agg(v)}));
@@ -531,12 +589,23 @@ function method(){
  <p><strong>PEC final.</strong> Se toma directamente de la columna EC de la base (puntaje total del sistema, sobre 100). En grupos es el promedio de EC de las evaluaciones.</p>
  <p><strong>Nota COPC.</strong> Es el EC de la evaluación, pero vale 0 si tiene al menos un ítem crítico en NO CUMPLE (8 ítems críticos de la pauta). "% error crítico" es el indicador de quiebre usado por motivo y asesor.</p>
  <p><strong>Bloques vs PEC final.</strong> El % de cada PEC excluye los ítems NO APLICA. La columna EC del sistema, en cambio, les da el puntaje completo. Por eso el PEC final suele ser más alto que la suma de los puntos de los bloques mostrados.</p>
+ <p><strong>Cuartiles.</strong> Como en Entel: se promedia el PEC final (EC) de cada asesor con los filtros aplicados (menos Asesor y Cuartil), se ordenan de mayor a menor y se reparten en cuatro grupos simétricos por posición. Q1 = mejor 25%, Q4 = peor 25%.</p>
  <p><strong>PEC Comercial.</strong> No existe en la pauta entregada ni en la base; queda reservado hasta definir sus ítems y su peso dentro de los 100 puntos.</p>
  <p><strong>Calidad de datos.</strong> ${DATA.filter(e=>e.bp.every(v=>v==null)).length} evaluación(es) con los 20 ítems en NO APLICA: no tienen % por bloque, pero sí EC. Ítems casi sin evaluar: ${st.join("; ")||"ninguno"}. El campo supervisor trae correos combinados; se tomó el correo distinto a ahuaranga@ecomdata.pe. La duración de llamada viene en formatos mezclados (mm:ss, hh:mm:ss, "TMO:") y una fecha, por eso no se analiza. El usuario del asesor no es uniforme; se usa el nombre.</p>`;
 }
 document.querySelectorAll(".sw button").forEach(b=>b.onclick=()=>{TMODE=b.dataset.v;document.querySelectorAll(".sw button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderTime(S.L,S.A)});
 $("#openAse").onclick=e=>{e.preventDefault();$("#dlgAse").showModal()};$("#closeAse").onclick=()=>$("#dlgAse").close();
 $("#dlgAse").addEventListener("click",e=>{if(e.target===$("#dlgAse"))$("#dlgAse").close()});
+$("#closeCuar").onclick=()=>$("#dlgCuar").close();
+$("#dlgCuar").addEventListener("click",e=>{if(e.target===$("#dlgCuar"))$("#dlgCuar").close()});
+$("#copyCuar").onclick=async e=>{
+ const f=v=>v==null||isNaN(v)?"":(v*100).toFixed(1).replace(".",",");
+ const tsv=[["Asesor","Cuartil","Supervisor","Evaluaciones","PEC final %","Nota COPC %","% error crítico","Venta concretada %","Ítems a reforzar"].join("\t"),
+  ...CUAR_DATA.slice().sort((a,b)=>(a.a.fin??9)-(b.a.fin??9)).map(x=>[x.n,x.q||"",x.sup,x.a.n,f(x.a.fin),f(x.a.copc),f(x.a.ec),f(x.a.efe),x.fallas.map(i=>`${i.n} (${i.nc})`).join("; ")].join("\t"))].join("\n");
+ const b=e.currentTarget;
+ try{await navigator.clipboard.writeText(tsv);b.textContent="¡Copiado!"}catch(_){b.textContent="No se pudo copiar"}
+ setTimeout(()=>b.textContent="Copiar para PDA",1800);
+};
 $("#openDet").onclick=e=>{e.preventDefault();$("#dlgDet").showModal()};$("#closeDet").onclick=()=>$("#dlgDet").close();
 $("#dlgDet").addEventListener("click",e=>{if(e.target===$("#dlgDet"))$("#dlgDet").close()});
 $("#openProd").onclick=()=>$("#dlgProd").showModal();$("#closeProd").onclick=()=>$("#dlgProd").close();

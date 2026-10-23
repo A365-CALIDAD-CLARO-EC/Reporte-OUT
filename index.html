@@ -210,7 +210,7 @@ main{padding-bottom:10px}
  <div class="shead"><div><h2>Evolución</h2><p class="lead" id="tLead"></p></div>
   <div class="sw" role="group" aria-label="Agrupar por"><button type="button" data-v="dia" aria-pressed="true">Día</button><button type="button" data-v="sem" aria-pressed="false">Semana</button></div></div>
  <div class="panel"><div class="chart"><canvas id="cDay"></canvas></div></div>
- <div class="tw" style="margin-top:14px"><table id="tTime"></table></div>
+ <div style="margin-top:14px;display:flex;justify-content:flex-end"><button type="button" id="openTime">Ver tabla de evolución · por <span id="timeMode">día</span></button></div>
 </section>
 
 <section id="supervisor">
@@ -275,6 +275,10 @@ main{padding-bottom:10px}
 <dialog id="dlgProd" aria-labelledby="dlgProdTitle">
  <div class="dhead"><div><h2 id="dlgProdTitle">Producto ofertado</h2><p class="lead" id="dlgProdSub"></p></div><button type="button" id="closeProd" class="pri">Cerrar</button></div>
  <div class="tw"><table id="tProd"></table></div>
+</dialog>
+<dialog id="dlgTime" aria-labelledby="dlgTimeTitle">
+ <div class="dhead"><div><h2 id="dlgTimeTitle">Evolución</h2><p class="lead" id="dlgTimeSub"></p></div><button type="button" id="closeTime" class="pri">Cerrar</button></div>
+ <div class="tw" style="max-height:calc(90vh - 180px)"><table id="tTime"></table></div>
 </dialog>
 <dialog id="dlgCuar" aria-labelledby="dlgCuarTitle">
  <div class="dhead"><div><h2 id="dlgCuarTitle">Asesores</h2><p class="lead" id="dlgCuarSub"></p></div><div style="display:flex;gap:8px"><button type="button" id="copyCuar">Copiar para PDA</button><button type="button" id="closeCuar" class="pri">Cerrar</button></div></div>
@@ -464,6 +468,9 @@ function renderTime(L,A){
  g.forEach((w,i)=>w.d=i&&w.a.fin!=null&&g[i-1].a.fin!=null?w.a.fin-g[i-1].a.fin:null);
  const lab=x=>sem?x.k.replace(/^Semana (\d) (\S+).*/,"S$1 $2"):fmtD(x.k);
  $("#tLead").textContent=`Barras: evaluaciones por ${sem?"semana":"día"}. Líneas: PEC final (EC) y nota COPC (error crítico = 0). La línea punteada es la meta.`;
+ $("#timeMode").textContent=sem?"semana":"día";
+ $("#dlgTimeTitle").textContent=`Evolución por ${sem?"semana":"día"}`;
+ $("#dlgTimeSub").textContent=`${g.length} ${sem?"semanas":"días"} · ${L.length} evaluaciones con los filtros actuales. Cambia entre Día y Semana con el selector de la sección. Ordena con clic en los encabezados.`;
  mk("cDay",{data:{labels:g.map(lab),datasets:[
   {type:"line",label:"PEC final",data:g.map(x=>x.a.fin*100),borderColor:css("--cx-c1"),backgroundColor:css("--cx-c1"),yAxisID:"y",tension:.25,pointRadius:4},
   {type:"line",label:"Nota COPC",data:g.map(x=>x.a.copc*100),borderColor:css("--cx-c2"),backgroundColor:css("--cx-c2"),yAxisID:"y",tension:.25,pointRadius:3,borderDash:[4,3]},
@@ -608,6 +615,8 @@ $("#copyCuar").onclick=async e=>{
 };
 $("#openDet").onclick=e=>{e.preventDefault();$("#dlgDet").showModal()};$("#closeDet").onclick=()=>$("#dlgDet").close();
 $("#dlgDet").addEventListener("click",e=>{if(e.target===$("#dlgDet"))$("#dlgDet").close()});
+$("#openTime").onclick=()=>$("#dlgTime").showModal();$("#closeTime").onclick=()=>$("#dlgTime").close();
+$("#dlgTime").addEventListener("click",e=>{if(e.target===$("#dlgTime"))$("#dlgTime").close()});
 $("#openProd").onclick=()=>$("#dlgProd").showModal();$("#closeProd").onclick=()=>$("#dlgProd").close();
 $("#dlgProd").addEventListener("click",e=>{if(e.target===$("#dlgProd"))$("#dlgProd").close()});
 $("#openNov").onclick=()=>$("#dlgNov").showModal();$("#closeNov").onclick=()=>$("#dlgNov").close();
